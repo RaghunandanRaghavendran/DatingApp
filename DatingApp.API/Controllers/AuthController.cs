@@ -54,7 +54,7 @@ namespace DatingApp.API.Controllers
             // Once the validation is done, we need to return the Jwt back to the client                      
             loginDto.UserName = loginDto.UserName.ToLower();
             User loginuser =  await _authRepo.Login(loginDto.UserName,loginDto.Password);
-
+            
             if(loginuser == null)
             {
                 return Unauthorized();
