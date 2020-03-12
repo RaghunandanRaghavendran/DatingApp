@@ -40,6 +40,7 @@ namespace DatingApp.API
         {
             services.AddDbContext<DataContext>(x=>x.UseSqlite(Configuration
                                                .GetConnectionString("DefaultConnection")));
+                                               
             services.AddControllers().AddNewtonsoftJson(options => {
                 options.SerializerSettings.
                        ReferenceLoopHandling = Newtonsoft.Json. 

@@ -20,7 +20,7 @@ namespace DatingApp.API.Repository
             _context.Add(entity);
         }
 
-        public void Deleter<T>(T entity) where T : class
+        public void Delete<T>(T entity) where T : class
         {
             _context.Remove(entity);
         }
