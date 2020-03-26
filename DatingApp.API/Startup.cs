@@ -65,6 +65,8 @@ namespace DatingApp.API
                         ValidateIssuer = false                    
                     };
                     });
+
+                    services.Configure<CloudinarySettings>(Configuration.GetSection("CoudinarySettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

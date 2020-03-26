@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './_services/auth.service';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import { User } from './_models/user';
 
 @Component({
   selector: 'app-root',
@@ -9,15 +10,21 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 })
 export class AppComponent implements OnInit {
   title = 'DatingApp-Angular';
-  token: any;
   jwtHelper =  new JwtHelperService();
 
   constructor(private authservice: AuthService) {
 
   }
   ngOnInit() {
-     this.token  = localStorage.getItem('token');
-     this.authservice.decodedtoken = this.jwtHelper.decodeToken(this.token);
+     const token  = localStorage.getItem('token');
+     const user: User = JSON.parse(localStorage.getItem('user'));
+     if (token) {
+      this.authservice.decodedtoken = this.jwtHelper.decodeToken(token);
+     }
+     if (user) {
+       this.authservice.currentUser = user;
+       this.authservice.changeMemberPhoto(user.photoUrl);
+     }
   }
 
 }

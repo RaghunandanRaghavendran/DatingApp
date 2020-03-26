@@ -14,6 +14,7 @@ import { error } from 'util';
 })
 export class MemberEditComponent implements OnInit {
 user: User;
+photoUrl: string;
 @ViewChild('editForm', {static: true}) editForm: NgForm;
 
 @HostListener('window:beforeunload', ['$event'])
@@ -28,6 +29,7 @@ $event.returnValue = true;
       // tslint:disable-next-line: no-string-literal
       this.user = data['user'];
     });
+    this.authservice.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
   }
   UpdateUser() {
     this.service.updateUser(this.authservice.decodedtoken.nameid, this.user).subscribe(next => {
@@ -37,7 +39,10 @@ $event.returnValue = true;
         this.alertify.error(err);
       }
     );
+  }
 
+  updatePhoto(photoURL: string) {
+    this.user.photoUrl = photoURL;
   }
 
 }
