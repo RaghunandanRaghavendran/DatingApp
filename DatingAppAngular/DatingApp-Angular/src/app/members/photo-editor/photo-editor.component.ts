@@ -55,6 +55,11 @@ intializeUploader() {
         isProfilePicture: res.isProfilePicture
       };
       this.photos.push(photo);
+      if (photo.isProfilePicture) {
+        this.authService.changeMemberPhoto(photo.url);
+        this.authService.currentUser.photoUrl = photo.url;
+        localStorage.setItem('user', JSON.stringify(this.authService.currentUser));
+      }
     }
   };
 }
@@ -65,9 +70,7 @@ setMainPhoto(photo: Photo) {
       this.currentMain = this.photos.filter(p => p.isProfilePicture === true)[0];
       this.currentMain.isProfilePicture = false;
       photo.isProfilePicture = true;
-      // this.getMemberPhotoChanged.emit(photo.url);
       this.authService.changeMemberPhoto(photo.url);
-      // This is to make sure, once the page is refreshed, we still set the photourl to local storage
       this.authService.currentUser.photoUrl = photo.url;
       localStorage.setItem('user', JSON.stringify(this.authService.currentUser));
     },
@@ -78,7 +81,6 @@ setMainPhoto(photo: Photo) {
 }
 
 deletePhoto(id: number) {
-
   this.alertify.confirm('Are you sure you want to delete the photo? ', () => {
     this.userService.deletePhoto(this.authService.decodedtoken.nameid, id).subscribe(() => {
      this.photos.splice(this.photos.findIndex(p => p.id === id), 1);
@@ -86,9 +88,7 @@ deletePhoto(id: number) {
     }, error => {
       this.alertify.error('Failed to delete this photo');
     }
-
     );
   });
 }
-
 }

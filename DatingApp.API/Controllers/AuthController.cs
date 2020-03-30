@@ -39,15 +39,14 @@ namespace DatingApp.API.Controllers
             if(await _authRepo.UserExists(registorDTO.UserName))
             return BadRequest("Username already taken");
 
-            User userToCreate = new User()
-            {
-                UserName = registorDTO.UserName,
-            };
+            User userToCreate = _mapper.Map<User>(registorDTO);
 
             User registereduser = await _authRepo.Register(userToCreate,registorDTO.Password);
 
-            //return CreatedAtRoute();  This is required but time being and will comeback later.
-            return StatusCode(201);
+            var userToReturn = _mapper.Map<UserForDetails>(registereduser);
+
+            return CreatedAtRoute("GetUser", new {controller = "Users", id = registereduser.Id}, userToReturn);
+            //return StatusCode(201);
         }
 
         [HttpPost("login")]
