@@ -25,10 +25,22 @@ namespace DatingApp.API.Controllers
       }
 
       [HttpGet]
-      public async Task<IActionResult> GetUsers() 
+      public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams) 
       {
-          var users = await _repository.GetUsers();
+          // For filtering.We are setting two new Id's in UserParams which are used for filtering
+          // setting UserID and Gender so that we can filter own profile appearing and Opposite gender
+          int currentuserID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+          var userFromRepo = await _repository.GetUser(currentuserID);
+          userParams.UserID = currentuserID;
+          if(string.IsNullOrEmpty(userParams.Gender))
+          {
+              userParams.Gender = userFromRepo.Gender == "male"?"female":"male";
+          }
+
+          
+          var users = await _repository.GetUsers(userParams);
           var usersToReturn = _mapper.Map<IEnumerable<UsersForList>>(users);
+          Response.AddPagination(users.CurrentPage, users.PageSize,users.TotalCount,users.TotalPage);
           return Ok(usersToReturn);
       }
 
