@@ -27,6 +27,11 @@ namespace DatingApp.API.Repository
             _context.Remove(entity);
         }
 
+        public async Task<Like> GetLike(int userId, int recepientId)
+        {
+            return await _context.Likes.FirstOrDefaultAsync(u=>u.LikerId == userId && u.LikeeId == recepientId);
+        }
+
         public async Task<Photo> GetPhoto(int id)
         {
             var photo = await _context.Photos.FirstOrDefaultAsync(x=>x.Id ==id);
@@ -57,6 +62,17 @@ namespace DatingApp.API.Repository
             users = users.Where(u=>u.Id != userParams.UserID);
             users = users.Where(u=>u.Gender == userParams.Gender);
 
+            if(userParams.Likers)
+            {
+                var userLikers = await GetUserLikes(userParams.UserID,userParams.Likers);
+                users = users.Where(u=>userLikers.Contains(u.Id));
+            }
+            if(userParams.Likees)
+            {
+                var userLikees = await GetUserLikes(userParams.UserID,userParams.Likers);
+                users = users.Where(u=>userLikees.Contains(u.Id));
+            }
+
             if(userParams.MinAge>0 && userParams.MaxAge>0)
             {
                 var minage = DateTime.Today.AddYears(-userParams.MaxAge -1);
@@ -77,6 +93,24 @@ namespace DatingApp.API.Repository
                 }               
             }
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber,userParams.PageSize);
+        }
+
+        private async Task<IEnumerable<int>> GetUserLikes(int id, bool likers) 
+        {
+            var users = await _context.Users.
+                               Include(x=>x.Likers).
+                               Include(x=>x.Likees).
+                               FirstOrDefaultAsync(u=>u.Id == id);
+
+        if(likers)
+        {
+            return users.Likers.Where(u=>u.LikeeId == id).Select(i=>i.LikerId);
+        }                       
+        else
+        {
+            return users.Likees.Where(u=>u.LikerId == id).Select(i=>i.LikeeId);
+        }
+
         }
         
         public async Task<bool> SaveChanges()

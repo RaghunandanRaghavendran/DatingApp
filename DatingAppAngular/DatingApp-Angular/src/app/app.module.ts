@@ -28,14 +28,17 @@ import { appRoutes } from './routes';
 import { ValueComponent } from './value/value.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
-import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
-import { MemberEditResolver } from './_resolvers/member-edit.resolver';
+
 import { AlertifyService } from './_services/alertify.service';
 import { AuthService } from './_services/auth.service';
 // Services and Interceptors
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
-import { MemberListsResolver } from './_resolvers/member-list.resolver';
 
+//Resolvers
+import { MemberListsResolver } from './_resolvers/member-list.resolver';
+import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
+import { MemberEditResolver } from './_resolvers/member-edit.resolver';
+import { ListsResolver} from './_resolvers/lists.resolver';
 
 
 
@@ -98,6 +101,7 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       MemberDetailResolver,
       MemberEditResolver,
       MemberListsResolver,
+      ListsResolver,
       PreventUnsavedChanges,
       { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }
    ],
